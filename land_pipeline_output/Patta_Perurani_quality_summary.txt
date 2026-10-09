@@ -1,0 +1,20 @@
+PATTA OCR EXTRACTION QUALITY SUMMARY
+====================================
+Candidate data rows: 106
+Distinct parent survey numbers: 35
+Distinct survey/subdivision pairs: 106
+Duplicate survey/subdivision pairs: 0
+Possible parent-survey matches: 106
+Unmatched in selected village: 0
+Rows with blank raw extent: 0
+Rows flagged for manual review: 106
+Rows included in quality issue list: 1
+
+LIMITATIONS
+This report checks extraction fields and candidate matches only.
+It does not verify ownership, legal validity, parcel boundaries,
+subdivision identity, extent units, or completeness of the official record.
+
+Files:
+/home/cloudshell-user/land_pipeline_output/Patta_Perurani_all_cadastral_comparison_reviewed.csv
+/home/cloudshell-user/land_pipeline_output/Patta_Perurani_quality_issues.csv

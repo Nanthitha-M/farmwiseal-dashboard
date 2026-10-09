@@ -13,7 +13,7 @@ st.set_page_config(
     layout="wide"
 )
 
-OUT = Path.home() / "land_pipeline_output"
+OUT = Path(__file__).resolve().parent / "land_pipeline_output"
 CSV = OUT / "Patta_Perurani_all_cadastral_comparison_reviewed.csv"
 GEO = OUT / "Patta_Perurani_GIS_review_layer.geojson"
 QUALITY = OUT / "Patta_Perurani_quality_summary.txt"
