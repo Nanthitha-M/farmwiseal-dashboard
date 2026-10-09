@@ -21,49 +21,132 @@ OCR = OUT / "Patta_Perurani_textract_text.txt"
 
 st.markdown("""
 <style>
+/* Overall page */
 .stApp {
-    background-color: #f3f6fb;
+    background: #f3f7fc;
     color: #172b4d;
 }
+section.main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+    max-width: 1500px;
+}
 
-/* Make text in the main content readable */
-section.main,
-section.main .stMarkdown,
-section.main .stMarkdown p,
-section.main .stMarkdown li,
+/* Main headings and text */
+section.main h1, section.main h2, section.main h3,
+section.main h4, section.main p, section.main li,
 section.main label,
 section.main [data-testid="stCaptionContainer"],
 section.main [data-testid="stMetricLabel"],
-section.main [data-testid="stMetricValue"],
-section.main [data-testid="stMetricDelta"] {
+section.main [data-testid="stMetricValue"] {
     color: #172b4d !important;
 }
+section.main h1 {
+    font-weight: 750;
+    letter-spacing: -0.5px;
+}
+section.main h2, section.main h3 {
+    font-weight: 650;
+}
 
-/* Keep the sidebar dark with white text */
+/* Sidebar */
 section[data-testid="stSidebar"] {
-    background-color: #10213e;
+    background: #10213e;
+    border-right: 1px solid #233b60;
 }
 section[data-testid="stSidebar"] * {
-    color: #ffffff;
+    color: #f8fbff;
+}
+section[data-testid="stSidebar"] input {
+    color: #172b4d !important;
+    background: #ffffff !important;
 }
 
-/* Keep the hero banner text white */
-div.hero, div.hero * {
+/* Hero banner */
+.hero {
+    padding: 26px;
+    border-radius: 16px;
+    color: #ffffff;
+    background: linear-gradient(120deg, #10213e, #1d5b83);
+    box-shadow: 0 8px 24px rgba(16, 33, 62, 0.12);
+}
+.hero h1, .hero h2, .hero h3, .hero p {
     color: #ffffff !important;
 }
-.hero {
-    padding: 24px;
-    border-radius: 16px;
-    color: white;
-    background: linear-gradient(120deg, #10213e, #1d5b83);
+
+/* Metric cards */
+div[data-testid="stMetric"] {
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid #d8e3f0;
+    box-shadow: 0 3px 12px rgba(23, 43, 77, 0.05);
+}
+div[data-testid="stMetricLabel"] {
+    color: #526783 !important;
+}
+div[data-testid="stMetricValue"] {
+    color: #10213e !important;
+    font-weight: 750;
 }
 
-/* Readable metric cards */
-div[data-testid="stMetric"] {
-    background: white;
-    padding: 14px;
-    border-radius: 12px;
-    border: 1px solid #dce5ef;
+/* Text fields, search boxes, and OCR preview */
+section.main input,
+section.main textarea,
+section.main [data-baseweb="input"] input,
+section.main [data-baseweb="textarea"] textarea {
+    background: #ffffff !important;
+    color: #172b4d !important;
+    -webkit-text-fill-color: #172b4d !important;
+    border-color: #c7d6e8 !important;
+    border-radius: 9px !important;
+    opacity: 1 !important;
+}
+section.main input::placeholder,
+section.main textarea::placeholder {
+    color: #647892 !important;
+    -webkit-text-fill-color: #647892 !important;
+    opacity: 1 !important;
+}
+section.main [data-baseweb="input"],
+section.main [data-baseweb="textarea"] {
+    background: #ffffff !important;
+}
+
+/* Buttons and download controls */
+section.main button[kind="primary"],
+section.main .stDownloadButton button {
+    background: #0878e8 !important;
+    color: #ffffff !important;
+    border: 1px solid #0878e8 !important;
+    border-radius: 9px !important;
+    font-weight: 650 !important;
+}
+section.main button[kind="primary"] *,
+section.main .stDownloadButton button * {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+section.main button[kind="secondary"] {
+    color: #17365f !important;
+    border-color: #b9cce2 !important;
+}
+
+/* Tables and code blocks */
+section.main [data-testid="stDataFrame"],
+section.main [data-testid="stTable"] {
+    border: 1px solid #d8e3f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+section.main pre,
+section.main code {
+    color: #e7efff !important;
+}
+
+/* Warnings remain readable */
+section.main [data-testid="stAlert"] {
+    border-radius: 10px;
 }
 </style>
 """, unsafe_allow_html=True)
