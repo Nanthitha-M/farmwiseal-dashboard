@@ -21,16 +21,49 @@ OCR = OUT / "Patta_Perurani_textract_text.txt"
 
 st.markdown("""
 <style>
-.stApp {background:#f3f6fb;}
-section[data-testid="stSidebar"] {background:#10213e;}
-section[data-testid="stSidebar"] * {color:white;}
-.hero {
-  padding:24px; border-radius:16px; color:white;
-  background:linear-gradient(120deg,#10213e,#1d5b83);
+.stApp {
+    background-color: #f3f6fb;
+    color: #172b4d;
 }
+
+/* Make text in the main content readable */
+section.main,
+section.main .stMarkdown,
+section.main .stMarkdown p,
+section.main .stMarkdown li,
+section.main label,
+section.main [data-testid="stCaptionContainer"],
+section.main [data-testid="stMetricLabel"],
+section.main [data-testid="stMetricValue"],
+section.main [data-testid="stMetricDelta"] {
+    color: #172b4d !important;
+}
+
+/* Keep the sidebar dark with white text */
+section[data-testid="stSidebar"] {
+    background-color: #10213e;
+}
+section[data-testid="stSidebar"] * {
+    color: #ffffff;
+}
+
+/* Keep the hero banner text white */
+div.hero, div.hero * {
+    color: #ffffff !important;
+}
+.hero {
+    padding: 24px;
+    border-radius: 16px;
+    color: white;
+    background: linear-gradient(120deg, #10213e, #1d5b83);
+}
+
+/* Readable metric cards */
 div[data-testid="stMetric"] {
-  background:white; padding:14px; border-radius:12px;
-  border:1px solid #dce5ef;
+    background: white;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #dce5ef;
 }
 </style>
 """, unsafe_allow_html=True)
