@@ -77,12 +77,18 @@ if page == "Overview":
         "Parent Surveys",
         df[survey_col].nunique() if survey_col and not df.empty else 0
     )
-    d.metric(
-        "Possible Matches",
-        int(df[match_col].astype(str).str.lower().isin(
-            ["true", "yes", "matched", "match"]
-        ).sum()) if match_col and not df.empty else "Review"
-    )
+    possible_matches = 0
+    if match_col and not df.empty:
+        possible_matches = int(
+            df[match_col].astype(str).str.contains(
+                r"possible|matched|match",
+                case=False,
+                na=False,
+                regex=True
+            ).sum()
+        )
+
+    d.metric("Possible Matches", possible_matches)
 
     st.subheader("Pipeline Files")
     for name, path in [
