@@ -322,7 +322,15 @@ OCR = OUT / "Patta_Perurani_textract_text.txt"
 TASK2_GIS = Path(__file__).resolve().parent / "task2_data" / "geospatial"
 BASIC_GIS = TASK2_GIS / "Basic_GIS_Layers"
 
+st.write("Debug — GIS folder:", str(TASK2_GIS))
+st.write("Debug — GIS folder exists:", TASK2_GIS.exists())
+st.write("Debug — Basic GIS folder:", str(BASIC_GIS))
+st.write("Debug — Basic GIS folder exists:", BASIC_GIS.exists())
 
+if BASIC_GIS.exists():
+    st.write("Debug — Files found:", [
+        p.name for p in BASIC_GIS.glob("*.geojson")
+    ])
 def hero(title, subtitle, eyebrow="LAND INTELLIGENCE"):
     st.markdown(
         f"""
