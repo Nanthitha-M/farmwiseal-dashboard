@@ -318,6 +318,9 @@ GEO = OUT / "Patta_Perurani_GIS_review_layer.geojson"
 QUALITY = OUT / "Patta_Perurani_quality_summary.txt"
 OCR = OUT / "Patta_Perurani_textract_text.txt"
 
+TASK2_GIS = Path(__file__).resolve().parent / "task2_data" / "geospatial"
+BASIC_GIS = TASK2_GIS / "Basic_GIS_Layers"
+
 
 def hero(title, subtitle, eyebrow="LAND INTELLIGENCE"):
     st.markdown(
@@ -525,6 +528,142 @@ elif page == "Cadastral Map":
                 unsafe_allow_html=True,
             )
     info_banner("Click a feature to inspect its attributes. The supplied geometries and candidate links require independent verification.")
+
+
+elif page == "GIS & Terrain Analysis":
+    hero(
+        "GIS & Terrain Analysis",
+        "Explore supplied cadastral maps and geographic reference layers.",
+        "GIS EXPLORER",
+    )
+    st.caption(
+        "Toggle the supplied layers below. Layers may cover different areas; "
+        "verify geographic alignment before drawing parcel-level conclusions."
+    )
+
+    layer_definitions = [
+        ("Park boundary", TASK2_GIS / "Park_Boundary.geojson"),
+        ("Park cadastral map", TASK2_GIS / "Park_Cadastral_Map.geojson"),
+        ("Park FMB map", TASK2_GIS / "Park_fmb_Map.geojson"),
+        ("Thoothukudi parks", TASK2_GIS / "Thoothukudi_Parks.geojson"),
+        ("Airports", BASIC_GIS / "Airport.geojson"),
+        ("Educational institutions", BASIC_GIS / "Educational_Institution.geojson"),
+        ("Railway stations", BASIC_GIS / "Railway_Stations.geojson"),
+        ("Railway network", BASIC_GIS / "Railway_network.geojson"),
+        ("Road network", BASIC_GIS / "Road_network.geojson"),
+        ("Seaports", BASIC_GIS / "Seaport.geojson"),
+        ("Substations", BASIC_GIS / "SubStations.geojson"),
+        ("Waterbodies", BASIC_GIS / "Waterbodies.geojson"),
+    ]
+    available = [(name, path) for name, path in layer_definitions if path.exists()]
+    missing = [(name, path) for name, path in layer_definitions if not path.exists()]
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Available GIS layers", len(available))
+    c2.metric("Missing GIS layers", len(missing))
+    c3.metric("DEM raster", "Not added")
+
+    if missing:
+        with st.expander("Missing layer files"):
+            for name, path in missing:
+                st.write(f"**{name}:** `{path}`")
+
+    if not available:
+        st.warning("No Task 2 GeoJSON files found. Check task2_data/geospatial.")
+    else:
+        default_names = {"Park boundary", "Park cadastral map"}
+        selected = st.multiselect(
+            "Layers to display",
+            options=[name for name, _ in available],
+            default=[name for name, _ in available if name in default_names],
+        )
+
+        # Calculate an initial center from the first selected layer with coordinates.
+        center = [8.79, 78.01]
+        for name, path in available:
+            if name not in selected:
+                continue
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                coords = []
+
+                def collect_coordinates(obj):
+                    if isinstance(obj, list):
+                        if (
+                            len(obj) >= 2
+                            and isinstance(obj[0], (int, float))
+                            and isinstance(obj[1], (int, float))
+                        ):
+                            coords.append((obj[1], obj[0]))
+                        else:
+                            for child in obj:
+                                collect_coordinates(child)
+
+                features_for_center = data.get("features", [])
+                if data.get("type") == "Feature":
+                    features_for_center = [data]
+                for feature in features_for_center:
+                    geometry = feature.get("geometry") or {}
+                    collect_coordinates(geometry.get("coordinates", []))
+                if coords:
+                    center = [
+                        sum(p[0] for p in coords) / len(coords),
+                        sum(p[1] for p in coords) / len(coords),
+                    ]
+                    break
+            except Exception:
+                continue
+
+        gis_map = folium.Map(
+            location=center, zoom_start=12, tiles="OpenStreetMap", control_scale=True
+        )
+        loaded = 0
+        for name, path in available:
+            if name not in selected:
+                continue
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                if data.get("type") not in ("FeatureCollection", "Feature"):
+                    st.warning(f"{name}: unsupported GeoJSON structure; skipped.")
+                    continue
+                props = {}
+                if data.get("type") == "FeatureCollection" and data.get("features"):
+                    props = data["features"][0].get("properties") or {}
+                elif data.get("type") == "Feature":
+                    props = data.get("properties") or {}
+                fields = list(props.keys())[:4]
+                tooltip = folium.GeoJsonTooltip(fields=fields) if fields else name
+                folium.GeoJson(data, name=name, tooltip=tooltip).add_to(gis_map)
+                loaded += 1
+            except Exception as exc:
+                st.error(f"Could not load {name} ({path.name}): {exc}")
+
+        folium.LayerControl(collapsed=False).add_to(gis_map)
+        st.caption(f"Displaying {loaded} selected layer(s).")
+        st_folium(gis_map, use_container_width=True, height=620, key="task2_gis_map")
+
+        with st.expander("GIS layer inventory"):
+            inventory = pd.DataFrame([
+                {
+                    "Layer": name,
+                    "File": path.name,
+                    "Status": "Available" if path.exists() else "Missing",
+                    "Size (KB)": round(path.stat().st_size / 1024, 1) if path.exists() else None,
+                }
+                for name, path in layer_definitions
+            ])
+            st.dataframe(inventory, use_container_width=True, hide_index=True)
+
+    st.subheader("Terrain and elevation analysis")
+    st.info(
+        "A DEM/elevation raster has not been integrated yet. Terrain, slope, and "
+        "elevation analysis will be added after a suitable public raster is sourced "
+        "and validated. No terrain results are claimed at this stage."
+    )
+    info_banner(
+        "GIS layers are reference data. Their presence on the map does not confirm "
+        "ownership, legal boundaries, or a match to a patta record."
+    )
 
 elif page == "Patta Records":
     hero("Patta Records", "View and search extracted patta records with candidate matches.", "LAND RECORDS")
