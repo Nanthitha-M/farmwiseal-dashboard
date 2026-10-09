@@ -375,8 +375,14 @@ st.sidebar.markdown('<div class="brand"><span>🌱</span> FarmwiseAI</div>', uns
 st.sidebar.markdown('<div class="side-kicker">NAVIGATION</div>', unsafe_allow_html=True)
 page = st.sidebar.radio(
     "NAVIGATION",
-    ["Overview", "Cadastral Map", "Patta Records", "Quality Review", "Document OCR"],
-    label_visibility="collapsed",
+    [
+        "Overview",
+        "Cadastral Map",
+        "GIS & Terrain Analysis",
+        "Patta Records",
+        "Quality Review",
+        "Document OCR",
+    ]
 )
 st.sidebar.markdown(
     '<div class="side-footer">Task 2 | Review prototype</div>',
