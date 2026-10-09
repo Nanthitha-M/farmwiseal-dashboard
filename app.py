@@ -309,7 +309,6 @@ st.markdown(
     }
     </style>
     """,
-    
     unsafe_allow_html=True,
 )
 
@@ -321,6 +320,7 @@ OCR = OUT / "Patta_Perurani_textract_text.txt"
 
 TASK2_GIS = Path(__file__).resolve().parent / "task2_data" / "geospatial"
 BASIC_GIS = TASK2_GIS / "Basic_GIS_Layers"
+
 
 def hero(title, subtitle, eyebrow="LAND INTELLIGENCE"):
     st.markdown(
@@ -487,7 +487,23 @@ elif page == "Cadastral Map":
             [sum(point[0] for point in points) / len(points), sum(point[1] for point in points) / len(points)]
             if points else [8.8, 78.0]
         )
-        m = folium.Map(location=center, zoom_start=14, tiles="OpenStreetMap", control_scale=True)
+        m = folium.Map(location=center, zoom_start=14, tiles=None, control_scale=True)
+        # Satellite imagery as the default basemap, with OpenStreetMap as an option.
+        folium.TileLayer(
+            tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            attr="Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+            name="Satellite",
+            overlay=False,
+            control=True,
+            show=True,
+        ).add_to(m)
+        folium.TileLayer(
+            tiles="OpenStreetMap",
+            name="OpenStreetMap",
+            overlay=False,
+            control=True,
+            show=False,
+        ).add_to(m)
         props0 = features[0].get("properties") or {}
         tooltip_fields = [key for key in [
             "vil_name", "survey_no", "unit_id", "block_id", "patta_candidate_count", "review_status"
@@ -614,9 +630,22 @@ elif page == "GIS & Terrain Analysis":
             except Exception:
                 continue
 
-        gis_map = folium.Map(
-            location=center, zoom_start=12, tiles="OpenStreetMap", control_scale=True
-        )
+        gis_map = folium.Map(location=center, zoom_start=12, tiles=None, control_scale=True)
+        folium.TileLayer(
+            tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            attr="Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+            name="Satellite",
+            overlay=False,
+            control=True,
+            show=True,
+        ).add_to(gis_map)
+        folium.TileLayer(
+            tiles="OpenStreetMap",
+            name="OpenStreetMap",
+            overlay=False,
+            control=True,
+            show=False,
+        ).add_to(gis_map)
         loaded = 0
         for name, path in available:
             if name not in selected:
