@@ -1,0 +1,6 @@
+document_village,document_survey_number,extent_as_transcribed,map_village_alias_used,candidate_map_surveys,match_status,verification_required
+Ramasamipuram,120-1,0.265,ramasamypuram,Ramasamypuram:120,possible_parent_survey_only,yes
+Keezhathattaparai,357-1,1.54.0,keelathattaparai,Keelathattaparai:357,possible_parent_survey_only,yes
+Keezhathattaparai,457,0.97.0,keelathattaparai,,unmatched_in_geojson,yes
+Ramasamipuram,121-1,235.0,ramasamypuram,,unmatched_in_geojson,yes
+Ramasamipuram,121-2,231.5,ramasamypuram,,unmatched_in_geojson,yes
