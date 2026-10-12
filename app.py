@@ -200,8 +200,8 @@ def collect_coords(obj, points):
             for item in obj:
                 collect_coords(item, points)
 
-
-def raster_preview(path, title, unit, cmap="terrain", max_side=650):
+# Change cmap="terrain" to cmap="earth"
+def raster_preview(path, title, unit, cmap="earth", max_side=650):
     """Read a bounded preview of a raster and show it with sea-level filtering and clean stats."""
     with rasterio.open(path) as src:
         arr = src.read(1, out_shape=(1, min(src.height, max_side), min(src.width, max_side))).astype("float32")
@@ -478,11 +478,11 @@ elif page == "GIS & Terrain Analysis":
         st.warning("Terrain rasters are not available in this deployment. Expected files under land_pipeline_output/terrain/.")
     else:
         if ELEVATION.exists():
-            st.markdown("#### Elevation (metres)")
-            try:
-                raster_preview(ELEVATION, "Elevation surface", "m", cmap="terrain")
-            except Exception as exc:
-                st.error(f"Could not display elevation raster: {exc}")
+           st.markdown("#### Elevation (metres)")
+        try:
+           raster_preview(ELEVATION, "Elevation surface", "m", cmap="earth")
+        except Exception as exc:
+           st.error(f"Could not display elevation raster: {exc}")
         else:
             st.info(f"Elevation raster not found: {ELEVATION}")
         if SLOPE.exists():
