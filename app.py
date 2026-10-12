@@ -127,20 +127,28 @@ def status_series(frame):
     return frame[col].astype(str)
 
 
+import re
+
 def parse_tamil_nadu_extent(raw_val):
     """
-    Converts Tamil Nadu Patta extent 'Hectare - Are' (e.g., '0 - 53.50' or '1 - 21.00')
-    into numeric Hectares (float).
+    Robustly parses Tamil Nadu revenue extents in both formats:
+    - '0 - 85.00' (hyphenated)
+    - '0 85.00'   (space-separated OCR artifact)
+    - '1 - 2.00'  (1 Hectare, 2 Ares = 1.02 Ha)
     """
     try:
         if not raw_val or pd.isna(raw_val):
             return 0.0
-        parts = str(raw_val).replace(" ", "").split("-")
-        if len(parts) == 2:
+        val_str = str(raw_val).strip()
+        # Split by hyphen, en-dash, or whitespace
+        parts = [p for p in re.split(r'[-–—\s]+', val_str) if p]
+        if len(parts) >= 2:
             hectares = float(parts[0])
             ares = float(parts[1])
             return round(hectares + (ares / 100.0), 4)
-        return round(float(raw_val), 4)
+        elif len(parts) == 1:
+            return round(float(parts[0]), 4)
+        return 0.0
     except Exception:
         return 0.0
 
@@ -337,15 +345,15 @@ if not df.empty and survey_col:
             
             if pct <= 5.0:
                 tier = "High Trust (80-100%)"
-                reason = f"Survey & extent match GIS polygon within {pct}%"
+                reason = "Exact Cadastral Match (≤ 5% variance)"
                 score = 92
             elif pct <= 15.0:
                 tier = "Moderate Trust (60-79%)"
-                reason = f"Minor area discrepancy ({pct}%) between GIS and Patta"
+                reason = "Minor Extent Variance (5% - 15%)"
                 score = 75
             else:
                 tier = "Field Verification (<60%)"
-                reason = f"Significant area divergence ({pct}%) - check subdivision acquisition"
+                reason = "Significant Extent Divergence (> 15%)"
                 score = 55
             return tier, reason, score, diff, pct
         
